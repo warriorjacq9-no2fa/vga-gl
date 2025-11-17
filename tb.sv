@@ -47,7 +47,8 @@ module tb;
         rst_n = 0;
         #50;
         rst_n = 1;
-
+        // Write number of cycles
+        $fwrite(file, "%064b", TOTAL_CYCLES);
         // Run simulation for TOTAL_CYCLES
         for (cycle_count = 0; cycle_count < TOTAL_CYCLES; cycle_count = cycle_count + 1) begin
             @(posedge clk);
