@@ -2,3 +2,4 @@
 *.vcd
 *.bin
 bin/*
+.vscode/*
