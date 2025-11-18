@@ -1,10 +1,10 @@
-`timescale 1ns/1ps
+`timescale 1us/1ns
 
 module tb;
 
     // Clock & reset
     reg clk = 0;
-    reg rst_n = 0;
+    reg rst_n = 1;
 
     // DUT inputs
     reg [7:0] ui_in   = 0;
@@ -17,7 +17,7 @@ module tb;
     wire [7:0] uio_oe;
 
     // Clock generation
-    always #10 clk = ~clk; // 50 MHz
+    always #1 clk = ~clk; // 50 MHz
 
     // Instantiate the DUT
     dut_wrapper dut (
@@ -32,7 +32,7 @@ module tb;
     );
 
     // Simulation parameters
-    localparam integer TOTAL_CYCLES = 420_000;
+    localparam integer TOTAL_CYCLES = 420_000 * 60; // 60 frames
     integer cycle_count;
     integer file;
 
@@ -45,7 +45,7 @@ module tb;
 
         // Reset pulse
         rst_n = 0;
-        #50;
+        #5;
         rst_n = 1;
         // Write number of cycles
         for (int i = 0; i < 8; i++) begin
