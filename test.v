@@ -36,23 +36,29 @@ module test (
 
 
     /* verilator lint_off LATCH */
-    reg[11:0] tr, tg;
     always @(*) begin // Display logic
-        tr = (x_mov * 15 / 639);
-        tg = (y * 15 / 479);
+        r = 0;
+        g = 0;
+        b = 0;
         if(de == 1) begin
-            r = tr[3:0];
-            g = tg[3:0];
+            r = x_mov[8:5];
+            g = y[8:5];
             b = 15 - r;
         end
     end
 
-    always @(posedge vsync or negedge rst_n) begin
-            if(~rst_n) begin
-                counter <= 0;
-            end
-            counter <= counter + 1;
+    reg vsync_d;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (~rst_n) begin
+            vsync_d <= 0;
+            counter <= 0;
+        end else begin
+            vsync_d <= vsync; // delay version
+            if (vsync && !vsync_d)
+                counter <= counter + 1; // rising edge detect
+        end
     end
 
-    wire _unused = &{ui_in, uio_in, ena, tr[11:4], tg[11:4], 1'b0};
+    wire _unused = &{ui_in, uio_in, ena, 1'b0};
 endmodule

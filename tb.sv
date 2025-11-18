@@ -48,14 +48,15 @@ module tb;
         #50;
         rst_n = 1;
         // Write number of cycles
-        $fwrite(file, "%064b", TOTAL_CYCLES);
+        for (int i = 0; i < 8; i++) begin
+            $fwrite(file, "%c", (TOTAL_CYCLES >> (8*i)) & 8'hFF);
+        end
         // Run simulation for TOTAL_CYCLES
         for (cycle_count = 0; cycle_count < TOTAL_CYCLES; cycle_count = cycle_count + 1) begin
             @(posedge clk);
             $fwrite(file, "%c%c", uo_out, uio_out);
         end
 
-        $display("Simulation finished. Data saved to dump.bin");
         $fclose(file);
         $finish;
     end
