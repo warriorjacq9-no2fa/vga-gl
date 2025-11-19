@@ -1,7 +1,17 @@
 CPPFLAGS = -I./include -std=c++11 -lGL -lglfw -Ofast -march=native -flto
 SRCS = main.cpp display.cpp glad.c
 
-all: verilog run
+VERILOG_SRCS?=$(TOP_MODULE)
+
+all: args verilog run
+
+args:
+ifeq ($(strip $(TOP_MODULE)),)
+	@echo "Error: TOP_MODULE not set." >&2
+	@echo "Syntax: make TOP_MODULE=<top module> VERILOG_SRCS=<full path to srcs>" >&2
+	@exit 1
+endif
+
 run: build
 	bin/main
 
@@ -10,7 +20,7 @@ build:
 	g++ $(SRCS) -o bin/main $(CPPFLAGS)
 
 verilog:
-	iverilog tb.sv test.v vga.v -DTOP_MODULE=test -o test.vvp -g2012
+	iverilog tb.sv $(VERILOG_SRCS) -DTOP_MODULE=(TOP_MODULE) -o test.vvp -g2012
 	vvp -v test.vvp
 
 clean:
