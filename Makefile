@@ -20,7 +20,8 @@ build:
 	g++ $(SRCS) -o bin/main $(CPPFLAGS)
 
 verilog:
-	iverilog tb.sv $(VERILOG_SRCS) -DTOP_MODULE=(TOP_MODULE) -o test.vvp -g2012
+	iverilog tb.sv $(VERILOG_SRCS) -DTOP_MODULE=$(TOP_MODULE) \
+	-DFUNCTIONAL -DUSE_POWER_PINS -DSIM -DUNIT_DELAY=\#1 -o test.vvp -g2012
 	vvp -v test.vvp
 
 clean:
