@@ -76,6 +76,8 @@ module dut_wrapper (
     output [7:0] uio_out,
     output [7:0] uio_oe
 );
+    supply0 GND;
+    supply1 PWR;
     `TOP_MODULE dut (
         .ui_in(ui_in),
         .uo_out(uo_out),
@@ -84,6 +86,8 @@ module dut_wrapper (
         .uio_oe(uio_oe),
         .ena(ena),
         .clk(clk),
-        .rst_n(rst_n)
+        .rst_n(rst_n),
+        .VPWR(PWR),
+        .VGND(GND)
     );
 endmodule
