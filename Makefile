@@ -3,7 +3,7 @@ SRCS = main.cpp display.cpp glad.c
 
 VERILOG_SRCS?=$(TOP_MODULE)
 
-all: args verilog run
+all: args test.vvp run
 
 args:
 ifeq ($(strip $(TOP_MODULE)),)
@@ -19,7 +19,7 @@ build:
 	mkdir -p bin
 	g++ $(SRCS) -o bin/main $(CPPFLAGS)
 
-verilog:
+test.vvp:
 	iverilog tb.sv $(VERILOG_SRCS) -DTOP_MODULE=$(TOP_MODULE) \
 	-DFUNCTIONAL -DUSE_POWER_PINS -DSIM -DUNIT_DELAY=\#1 -o test.vvp -g2012
 	vvp -v test.vvp
