@@ -23,7 +23,7 @@ typedef struct {
 
 std::vector<unsigned char> pixels(WIDTH * HEIGHT * 4);
 
-inline uint8_t _4to8(uint8_t v) { return (v << 4) | v; }
+inline uint8_t _2to8(uint8_t v) { return (((v >> 3) & 0x02) | (v & 0x01)) * 0x55; }
 
 static inline void wait_gl_done() {
     std::unique_lock<std::mutex> lock(mtx);
@@ -60,9 +60,9 @@ static void tb(std::vector<vga_output_t> outs) {
     bool last_hsync = true;
     bool last_vsync = true;
     
-    constexpr uint8_t HSYNC_MASK = 0b00010000;
-    constexpr uint8_t VSYNC_MASK = 0b00100000;
-    constexpr uint8_t DE_MASK    = 0b01000000;
+    constexpr uint8_t HSYNC_MASK = 0b10000000;
+    constexpr uint8_t VSYNC_MASK = 0b00001000;
+    constexpr uint8_t DE_MASK    = 0b10000000;
     printf("Starting...\n");
 
     constexpr double frame_time = 1.0 / 60.0; // 60 FPS
@@ -70,8 +70,8 @@ static void tb(std::vector<vga_output_t> outs) {
     auto frame_start = std::chrono::high_resolution_clock::now();
 
     while(true) {
-        bool hsync = outs[i].uio_out & HSYNC_MASK;
-        bool vsync = outs[i].uio_out & VSYNC_MASK;
+        bool hsync = outs[i].uo_out & HSYNC_MASK;
+        bool vsync = outs[i].uo_out & VSYNC_MASK;
         bool de    = outs[i].uio_out & DE_MASK;
 
         // Detect rising edges of syncs
@@ -96,9 +96,9 @@ static void tb(std::vector<vga_output_t> outs) {
         if (x < WIDTH && y < HEIGHT) {
             char r = 0, g = 0, b = 0;
             if(de) {
-                r = _4to8(outs[i].uo_out & 0b00001111);
-                g = _4to8((outs[i].uo_out & 0b11110000) >> 4);
-                b = _4to8(outs[i].uio_out & 0b00001111);
+                r = _2to8(outs[i].uo_out & 0b00010001);
+                g = _2to8((outs[i].uo_out & 0b00100010) >> 1);
+                b = _2to8((outs[i].uo_out & 0b01000100) >> 2);
             }
 
             unsigned char* p = &pixels[(y * WIDTH + x) * 4];
