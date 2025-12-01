@@ -62,7 +62,7 @@ static void tb(std::vector<vga_output_t> outs) {
     
     constexpr uint8_t HSYNC_MASK = 0b10000000;
     constexpr uint8_t VSYNC_MASK = 0b00001000;
-    constexpr uint8_t DE_MASK    = 0b10000000;
+    constexpr uint8_t DE_MASK    = 0b00000001;
     printf("Starting...\n");
 
     constexpr double frame_time = 1.0 / 60.0; // 60 FPS
